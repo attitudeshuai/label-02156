@@ -1,0 +1,9 @@
+services:
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile
+    container_name: library-frontend
+    ports:
+      - "8081:80"
+    restart: unless-stopped

@@ -1,0 +1,172 @@
+// Design System Variables
+$primary-color: #409EFF;
+$primary-light: #79BBFF;
+$primary-dark: #337ECC;
+
+$success-color: #67C23A;
+$warning-color: #E6A23C;
+$danger-color: #F56C6C;
+$info-color: #909399;
+
+$text-primary: #303133;
+$text-regular: #606266;
+$text-secondary: #909399;
+$text-placeholder: #C0C4CC;
+
+$border-color: #DCDFE6;
+$background-color: #F5F7FA;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Global Styles
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: $background-color;
+  color: $text-primary;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #C0C4CC;
+  border-radius: 3px;
+  
+  &:hover {
+    background-color: #909399;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+// Element Plus Overrides
+.el-card {
+  border-radius: 8px;
+  
+  &.is-always-shadow {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.el-table {
+  .el-table__header-wrapper {
+    th {
+      background-color: #FAFAFA !important;
+      color: $text-primary;
+      font-weight: 600;
+    }
+  }
+  
+  .el-table__row:hover > td {
+    background-color: #F5F7FA !important;
+  }
+}
+
+.el-button {
+  border-radius: 4px;
+}
+
+.el-dialog {
+  border-radius: 8px;
+  
+  .el-dialog__header {
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 16px;
+    margin-right: 0;
+  }
+  
+  .el-dialog__title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .el-dialog__body {
+    padding: 24px 20px 16px;
+  }
+}
+
+.el-form-item__label {
+  font-weight: 500;
+}
+
+// Utility Classes
+.page-container {
+  padding: $spacing-lg;
+  background-color: $background-color;
+  min-height: calc(100vh - 56px);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.search-bar {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: $spacing-md;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-color;
+}
+
+// Status Tags
+.status-tag {
+  &.borrowing {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+  
+  &.returned {
+    color: $success-color;
+    background-color: rgba($success-color, 0.1);
+  }
+  
+  &.overdue {
+    color: $danger-color;
+    background-color: rgba($danger-color, 0.1);
+  }
+}
