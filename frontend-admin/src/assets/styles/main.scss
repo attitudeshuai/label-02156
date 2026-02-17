@@ -72,9 +72,26 @@ html, body {
       background-color: #FAFAFA !important;
       color: $text-primary;
       font-weight: 600;
+      height: 48px;
     }
   }
-  
+
+  // 统一行高
+  .el-table__body {
+    .el-table__row {
+      td {
+        height: 56px;
+        padding: 8px 0;
+
+        .cell {
+          line-height: 1.5;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+
   .el-table__row:hover > td {
     background-color: #F5F7FA !important;
   }

@@ -160,7 +160,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { mockApi } from '@/mock/data'
+import * as userApi from '@/api/user'
 
 const loading = ref(false)
 const tableData = ref([])
@@ -210,18 +210,19 @@ onMounted(() => {
   loadData()
 })
 
-const loadData = () => {
+const loadData = async () => {
   loading.value = true
-  setTimeout(() => {
-    const result = mockApi.getUsers({
+  try {
+    const result = await userApi.getUserList({
       ...searchForm,
       page: pagination.page,
       pageSize: pagination.pageSize
     })
     tableData.value = result.list
     pagination.total = result.total
+  } finally {
     loading.value = false
-  }, 300)
+  }
 }
 
 const handleSearch = () => {
@@ -249,8 +250,8 @@ const handleEdit = (row) => {
 const handleDelete = (row) => {
   ElMessageBox.confirm('确定要删除该用户吗？', '提示', {
     type: 'warning'
-  }).then(() => {
-    mockApi.deleteUser(row.id)
+  }).then(async () => {
+    await userApi.deleteUser(row.id)
     ElMessage.success('删除成功')
     loadData()
   }).catch(() => {})
@@ -260,8 +261,8 @@ const handleToggleStatus = (row) => {
   const action = row.status === 1 ? '禁用' : '启用'
   ElMessageBox.confirm(`确定要${action}该用户吗？`, '提示', {
     type: 'warning'
-  }).then(() => {
-    mockApi.toggleUserStatus(row.id)
+  }).then(async () => {
+    await userApi.toggleUserStatus(row.id)
     ElMessage.success(`${action}成功`)
     loadData()
   }).catch(() => {})
@@ -269,14 +270,14 @@ const handleToggleStatus = (row) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return
-  
-  await formRef.value.validate((valid) => {
+
+  await formRef.value.validate(async (valid) => {
     if (valid) {
       if (formData.id) {
-        mockApi.updateUser(formData.id, formData)
+        await userApi.updateUser(formData.id, formData)
         ElMessage.success('更新成功')
       } else {
-        mockApi.addUser(formData)
+        await userApi.addUser(formData)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false

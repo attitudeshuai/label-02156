@@ -84,8 +84,10 @@
 
 ### 3.2 工程规范
 - 组件化开发
-- 代码分层清晰
-- ESLint 代码规范
+- 代码分层清晰（视图层 / API 层 / Mock 层分离）
+- ESLint 代码规范（eslint-plugin-vue + eslint:recommended）
+- 统一的日志系统（支持 DEBUG/INFO/WARN/ERROR 多级别）
+- Axios 请求封装（统一拦截器、错误处理）
 - 注释完整
 
 ---

@@ -55,26 +55,11 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="ID" width="60" />
-        <el-table-column label="封面" width="80">
-          <template #default="{ row }">
-            <el-image
-              :src="row.cover"
-              style="width: 50px; height: 70px"
-              fit="cover"
-            >
-              <template #error>
-                <div class="image-placeholder">
-                  <el-icon><Picture /></el-icon>
-                </div>
-              </template>
-            </el-image>
-          </template>
-        </el-table-column>
+        <el-table-column prop="id" label="ID" width="60" align="center" />
         <el-table-column prop="title" label="书名" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="author" label="作者" width="120" show-overflow-tooltip />
-        <el-table-column prop="isbn" label="ISBN" width="160" />
-        <el-table-column prop="category" label="分类" width="100">
+        <el-table-column prop="author" label="作者" width="100" show-overflow-tooltip />
+        <el-table-column prop="isbn" label="ISBN" width="150" show-overflow-tooltip />
+        <el-table-column prop="category" label="分类" width="80" align="center">
           <template #default="{ row }">
             <el-tag type="info">{{ row.category }}</el-tag>
           </template>
@@ -172,9 +157,6 @@
         <el-form-item label="库存数量" prop="stock">
           <el-input-number v-model="formData.stock" :min="0" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="封面图片" prop="cover">
-          <el-input v-model="formData.cover" placeholder="请输入封面图片URL" />
-        </el-form-item>
         <el-form-item label="图书简介" prop="description">
           <el-input
             v-model="formData.description"
@@ -210,9 +192,10 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { mockApi, categories } from '@/mock/data'
+import * as bookApi from '@/api/book'
 
 const loading = ref(false)
+const categories = ref([])
 const tableData = ref([])
 const dialogVisible = ref(false)
 const detailVisible = ref(false)
@@ -240,7 +223,6 @@ const formData = reactive({
   publisher: '',
   publishDate: '',
   stock: 0,
-  cover: '',
   description: ''
 })
 
@@ -251,22 +233,28 @@ const rules = {
   category: [{ required: true, message: '请选择分类', trigger: 'change' }]
 }
 
-onMounted(() => {
-  loadData()
+onMounted(async () => {
+  await loadCategories()
+  await loadData()
 })
 
-const loadData = () => {
+const loadCategories = async () => {
+  categories.value = await bookApi.getCategories()
+}
+
+const loadData = async () => {
   loading.value = true
-  setTimeout(() => {
-    const result = mockApi.getBooks({
+  try {
+    const result = await bookApi.getBookList({
       ...searchForm,
       page: pagination.page,
       pageSize: pagination.pageSize
     })
     tableData.value = result.list
     pagination.total = result.total
+  } finally {
     loading.value = false
-  }, 300)
+  }
 }
 
 const handleSearch = () => {
@@ -300,8 +288,8 @@ const handleView = (row) => {
 const handleDelete = (row) => {
   ElMessageBox.confirm('确定要删除该图书吗？', '提示', {
     type: 'warning'
-  }).then(() => {
-    mockApi.deleteBook(row.id)
+  }).then(async () => {
+    await bookApi.deleteBook(row.id)
     ElMessage.success('删除成功')
     loadData()
   }).catch(() => {})
@@ -309,14 +297,14 @@ const handleDelete = (row) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return
-  
-  await formRef.value.validate((valid) => {
+
+  await formRef.value.validate(async (valid) => {
     if (valid) {
       if (formData.id) {
-        mockApi.updateBook(formData.id, formData)
+        await bookApi.updateBook(formData.id, formData)
         ElMessage.success('更新成功')
       } else {
-        mockApi.addBook(formData)
+        await bookApi.addBook(formData)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false
@@ -338,23 +326,12 @@ const resetForm = () => {
   formData.publisher = ''
   formData.publishDate = ''
   formData.stock = 0
-  formData.cover = ''
   formData.description = ''
   formRef.value?.resetFields()
 }
 </script>
 
 <style lang="scss" scoped>
-.image-placeholder {
-  width: 50px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #F5F7FA;
-  color: #C0C4CC;
-}
-
 .action-buttons {
   display: flex;
   justify-content: center;

@@ -193,7 +193,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { mockApi, books, users } from '@/mock/data'
+import * as borrowApi from '@/api/borrow'
 
 const loading = ref(false)
 const tableData = ref([])
@@ -227,28 +227,29 @@ const rules = {
   dueDate: [{ required: true, message: '请选择应还日期', trigger: 'change' }]
 }
 
-onMounted(() => {
-  loadData()
-  loadOptions()
+onMounted(async () => {
+  await loadOptions()
+  await loadData()
 })
 
-const loadData = () => {
+const loadData = async () => {
   loading.value = true
-  setTimeout(() => {
-    const result = mockApi.getBorrows({
+  try {
+    const result = await borrowApi.getBorrowList({
       ...searchForm,
       page: pagination.page,
       pageSize: pagination.pageSize
     })
     tableData.value = result.list
     pagination.total = result.total
+  } finally {
     loading.value = false
-  }, 300)
+  }
 }
 
-const loadOptions = () => {
-  bookOptions.value = books
-  userOptions.value = users.filter(u => u.role !== 'admin')
+const loadOptions = async () => {
+  bookOptions.value = await borrowApi.getAvailableBooks()
+  userOptions.value = await borrowApi.getBorrowers()
 }
 
 const handleSearch = () => {
@@ -278,8 +279,8 @@ const handleAdd = () => {
 const handleReturn = (row) => {
   ElMessageBox.confirm('确定要归还该图书吗？', '提示', {
     type: 'warning'
-  }).then(() => {
-    mockApi.returnBook(row.id)
+  }).then(async () => {
+    await borrowApi.returnBook(row.id)
     ElMessage.success('归还成功')
     loadData()
   }).catch(() => {})
@@ -287,10 +288,10 @@ const handleReturn = (row) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return
-  
-  await formRef.value.validate((valid) => {
+
+  await formRef.value.validate(async (valid) => {
     if (valid) {
-      mockApi.addBorrow(formData)
+      await borrowApi.addBorrow(formData)
       ElMessage.success('借阅登记成功')
       dialogVisible.value = false
       loadData()
