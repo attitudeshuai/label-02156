@@ -321,11 +321,11 @@ export const mockApi = {
       result = result.filter(record => record.status === params.status)
     }
     
-    const total = result.length
     const page = params.page || 1
     const pageSize = params.pageSize || 10
     const start = (page - 1) * pageSize
     result = result.slice(start, start + pageSize)
+    const total = result.length
     
     return { list: result, total }
   },
