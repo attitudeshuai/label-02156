@@ -103,8 +103,8 @@
           :total="pagination.total"
           :page-sizes="[10, 20, 50]"
           layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSearch"
-          @current-change="handleSearch"
+          @size-change="handlePageChange"
+          @current-change="handlePageChange"
         />
       </div>
     </div>
@@ -259,6 +259,10 @@ const loadData = async () => {
 
 const handleSearch = () => {
   pagination.page = 1
+  loadData()
+}
+
+const handlePageChange = () => {
   loadData()
 }
 
