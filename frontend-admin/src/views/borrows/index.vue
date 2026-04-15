@@ -99,8 +99,8 @@
           :total="pagination.total"
           :page-sizes="[10, 20, 50]"
           layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSearch"
-          @current-change="handleSearch"
+          @size-change="loadData"
+          @current-change="loadData"
         />
       </div>
     </div>
